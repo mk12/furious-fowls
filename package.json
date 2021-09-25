@@ -1,0 +1,20 @@
+{
+  "name": "furious-fowls",
+  "scripts": {
+    "dev": "esbuild src/app.ts --servedir=. --outdir=dist --bundle --sourcemap",
+    "build": "esbuild src/app.ts --outdir=dist --bundle --minify",
+    "tc": "tsc --noEmit",
+    "fix": "eslint --fix src/**/*.ts"
+  },
+  "devDependencies": {
+    "@types/p5": "^0.9.0",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "@typescript-eslint/parser": "^4.31.0",
+    "esbuild": "^0.12.25",
+    "eslint": "^7.32.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.4.2"
+  },
+  "dependencies": {}
+}

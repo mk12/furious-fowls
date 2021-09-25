@@ -4,6 +4,17 @@ Furious Fowls is a web game inspired by Angry Birds, built with [TypeScript], [p
 
 I originally wrote Furious Fowls in my ICS2O high school class using [Processing] and [fisica]. This repository is my rewrite of that ten years later.
 
+## Usage
+
+To play the game, visit https://mk12.github.io/furious-fowls.
+
+To hack on the game, run `npm install`, and then:
+
+- `npm run dev` to serve the app and auto-rebuild.
+- `npm run build` to build an optimized app bundle.
+- `npm run tc` to typecheck the code.
+- `npm run fix` to format and lint the code.
+
 ## Gameplay
 
 Win this innovative game by catapulting red birds into the makeshift shelters protecting green pigs. The level is cleared once each pig has gone _Poof!_
@@ -11,10 +22,6 @@ Win this innovative game by catapulting red birds into the makeshift shelters pr
 There are 8 built-in levels and 3 slots for creating custom levels with the level editor. If you beat all 8 levels with one shot each, it unlocks a secret capability.
 
 <img src="sketch.svg" width="500">
-
-## Usage
-
-TODO
 
 ## License
 

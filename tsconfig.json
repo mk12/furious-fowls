@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "rootDir": "./src",
+    "moduleResolution": "node",
+    "strict": true,
+    "types": [
+      "p5/global"
+    ]
+  }
+}

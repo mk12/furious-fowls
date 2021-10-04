@@ -9,4 +9,6 @@ body {
 
 main {
   display: contents;
+  user-select: none;
+  -webkit-user-select: none;
 }

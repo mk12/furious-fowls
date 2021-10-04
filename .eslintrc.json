@@ -1,17 +1,16 @@
 {
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "plugins": [
-    "@typescript-eslint",
+    "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "rules": {
-    "prettier/prettier": "error",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/explicit-function-return-type": "off"
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "sort-imports": "off"
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

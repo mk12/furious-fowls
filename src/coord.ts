@@ -1,11 +1,13 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
-// A coordinate positions an object by anchor point.
+import { Image } from "p5";
+
+// A coordinate positions a UI element by anchor point.
 export interface Coord {
   // Pixel coordinates of the anchor relative to the reference.
   x?: number;
   y?: number;
-  // Object anchor point.
+  // Element anchor point.
   anchor?: Ref;
   // Canvas reference point.
   from?: Ref;
@@ -28,7 +30,7 @@ export const bottomLeft: Ref = { rx: 0, ry: 1 };
 export const bottomCenter: Ref = { rx: 0.5, ry: 1 };
 export const bottomRight: Ref = { rx: 1, ry: 1 };
 
-// The size of an object in pixels.
+// The size of a UI element in pixels.
 export interface Size {
   width: number;
   height: number;
@@ -47,4 +49,19 @@ export function resolve(
     x: rx * width - (ax - tx) * size.width + (coord.x ?? 0),
     y: ry * height - (ay - ty) * size.height + (coord.y ?? 0),
   };
+}
+
+// Draws an image at the given coordinate.
+export function imageAt(img: Image, coord: Coord): void {
+  const { x, y } = resolve(coord, img);
+  image(img, x, y);
+}
+
+// Draws text at the given coordinate
+export function textAt(str: string, coord: Coord): void {
+  if (coord.anchor != undefined) {
+    throw new Error("textAt does not support anchors");
+  }
+  const { x, y } = resolve(coord, { width: 0, height: 0 });
+  text(str, x, y);
 }

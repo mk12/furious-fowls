@@ -1,83 +1,74 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
-import { BackButton, buttons } from "./button";
-import { numLevels } from "./constants";
-import { bottomCenter, bottomLeft, center } from "./coord";
+import { BackButton, Button, buttons } from "./button";
+import { bottomCenter, bottomLeft, center, imageAt, textAt } from "./coord";
 import { Game } from "./game";
-import { imageAt, images, TitleView } from "./image";
-import { getLevelStates, setCurrentLevel } from "./state";
-import { zip } from "./util";
-import { pushView, View, ViewType } from "./view";
+import { images, TitleView } from "./image";
+import {
+  getLevelStatus,
+  LevelDescriptor,
+  loadLevel,
+  numStandardLevels,
+} from "./level";
+import { maxDensityAllowed, maxDensityOn, setMaxDensity } from "./max_density";
+import { pushViewWith as pushViewMsg, View, ViewType } from "./view";
 
 export class LevelSelect implements View {
   static readonly layers: ViewType[] = [TitleView, this, BackButton];
 
   private readonly img = images("selectMessage");
-  // private readonly btn = {
-  //   ...buttons("custom1", "custom2", "custom3"),
-  //   level: new Button("aLevel", "aStarredLevel", { disabled: "aLockedLevel" }),
-  //   checkbox: new Button("checkbox", "checkedbox"),
-  // };
-  private readonly btn = buttons("custom1", "custom2", "custom3", {
-    level: {
-      states: ["aLevel", "aStarredLevel", { disabled: "aLockedLevel" }],
-    },
-    checkbox: {
-      states: ["checkbox", "checkedbox"],
-    },
-  });
-  // private readonly btn = buttons(
-  //   "custom1",
-  //   "custom2",
-  //   "custom3",
-  //   {
-  //     name: "level",
-  //     states: ["aLevel", "aStarredLevel", { disabled: "aLockedLevel" }],
-  //   },
-  //   {
-  //     name: "checkbox",
-  //     states: ["checkbox", "checkedbox"],
-  //   },
-  // );
-  private readonly levelButtons: typeof this.btn.level[];
-  private allStarred = false;
+  private readonly btn = {
+    ...buttons("custom1", "custom2", "custom3"),
+    level: new Button("aLevel", "aStarredLevel", { disabled: "aLockedLevel" }),
+    checkbox: new Button("checkbox", "checkedbox"),
+  };
+  private readonly levels = new Map<LevelDescriptor, Button<string>>();
 
   constructor() {
-    this.levelButtons = [];
     const initialX = 85;
     const stride = 110;
-    let x = initialX;
-    let y = 150;
-    for (let i = 0; i < numLevels; i++) {
-      this.levelButtons.push(this.btn.level.copy().place({ x, y }));
+    let x, y;
+
+    x = initialX;
+    y = 150;
+    for (let i = 0; i < numStandardLevels; i++) {
+      this.levels.set(
+        { kind: "standard", number: i + 1 },
+        this.btn.level.copy().place({ x, y }),
+      );
       x += stride;
-      if (i % 5 == 0 && i > 0) {
+      if (i % 5 === 0 && i > 0) {
         x = initialX;
         y += stride;
       }
     }
-    this.btn.custom1.place({ x: 85, y: 400 });
-    this.btn.custom2.place({ x: 195, y: 400 });
-    this.btn.custom3.place({ x: 305, y: 400 });
+
+    x = initialX;
+    y = 400;
+    const custom = [this.btn.custom1, this.btn.custom2, this.btn.custom3];
+    for (const [i, button] of custom.entries()) {
+      this.levels.set(
+        { kind: "custom", number: i + 1 },
+        button.place({ x, y }),
+      );
+      x += stride;
+    }
+
     this.btn.checkbox.place({ x: 50, y: -45, from: bottomLeft });
   }
 
   onShow(): void {
-    const states = getLevelStates();
-    let allStarred = true;
-    for (const [button, state] of zip(this.levelButtons, states)) {
-      button.state = (
-        {
+    for (const [desc, button] of this.levels) {
+      if (desc.kind === "standard") {
+        button.state = {
           open: "aLevel",
           locked: "aLockedLevel",
           starred: "aStarredLevel",
-        } as const
-      )[state];
-      if (state != "starred") {
-        allStarred = false;
+        }[getLevelStatus(desc)];
       }
     }
-    this.allStarred = allStarred;
+    this.btn.checkbox.enabled = maxDensityAllowed();
+    this.btn.checkbox.state = maxDensityOn() ? "checkedbox" : "checkbox";
   }
 
   draw(): void {
@@ -86,41 +77,31 @@ export class LevelSelect implements View {
     noStroke();
     textSize(35);
     textAlign(CENTER);
-    for (const [idx, button] of this.levelButtons.entries()) {
+    for (const [desc, button] of this.levels) {
       button.draw();
-      const { x, y } = button.resolve(center);
-      text(idx + 1, x, y + 15);
+      if (desc.kind === "standard") {
+        const { x, y } = button.resolve(center);
+        textAt(str(desc.number), { x, y: y + 15 });
+      }
     }
-    this.btn.custom1.draw();
-    this.btn.custom2.draw();
-    this.btn.custom3.draw();
-    if (this.allStarred) {
+    if (this.btn.checkbox.enabled) {
       this.btn.checkbox.draw();
       textSize(16);
       textAlign(LEFT);
-      text("Max Density", 85, height - 55);
+      textAt("Max Density", { x: 85, y: -55, from: bottomLeft });
     }
   }
 
   mousePressed(): void {
-    for (const [idx, button] of this.levelButtons.entries()) {
-      if (button.state != "aLockedLevel" && button.mouseOver()) {
-        setCurrentLevel(idx + 1);
-        pushView(Game);
+    for (const [desc, button] of this.levels) {
+      if (button.hover()) {
+        pushViewMsg(Game, loadLevel(desc));
         return;
       }
     }
-    if (this.btn.custom1.mouseOver()) {
-      setCurrentLevel(-1);
-      pushView(Game);
-    } else if (this.btn.custom2.mouseOver()) {
-      setCurrentLevel(-2);
-      pushView(Game);
-    } else if (this.btn.custom3.mouseOver()) {
-      setCurrentLevel(-3);
-      pushView(Game);
-    } else if (this.allStarred && this.btn.checkbox.mouseOver()) {
+    if (this.btn.checkbox.hover()) {
       this.btn.checkbox.toggle();
+      setMaxDensity(this.btn.checkbox.state === "checkedbox");
     }
   }
 }

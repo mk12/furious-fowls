@@ -8,8 +8,10 @@
     "@typescript-eslint"
   ],
   "rules": {
+    "eqeqeq": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "sort-imports": "off"
   },
   "parser": "@typescript-eslint/parser",

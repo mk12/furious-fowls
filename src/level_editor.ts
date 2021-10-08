@@ -1,32 +1,42 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
-import { BackButton, buttons } from "./button";
-import { groundColor, maxBirdsInLevel, minBirdsInLevel } from "./constants";
-import { bottomLeft, center, topRight } from "./coord";
+import { BackButton, Button, buttons } from "./button";
+import {
+  groundColor,
+  groundThickness,
+  maxBirdsInLevel,
+  minBirdsInLevel,
+} from "./constants";
+import { bottomLeft, center, imageAt, topRight } from "./coord";
 import { Game } from "./game";
-import { drawModal, imageAt, images } from "./image";
-import { pushView, View, ViewType } from "./view";
+import { drawModal, images } from "./image";
+import { Level } from "./level";
+import { pushViewWith, View, ViewType } from "./view";
 
 export class LevelEditor implements View {
   static readonly layers: ViewType[] = [this, BackButton];
 
   private readonly img = images("openDialog", "bird", "slingshot");
-  private readonly btn = buttons(
-    "increment",
-    "decrement",
-    "addBlock",
-    "addPig",
-    "open",
-    "test",
-    "custom1",
-    "custom2",
-    "custom3",
-    { name: "cycle", states: ["blockCycle0", "blockCycle1", "blockCycle2"] },
-    { name: "delete", states: ["delete", "deleteOn"] },
-  );
+  private readonly btn = {
+    ...buttons(
+      "increment",
+      "decrement",
+      "addBlock",
+      "addPig",
+      "open",
+      "test",
+      "custom1",
+      "custom2",
+      "custom3",
+    ),
+    cycle: new Button("blockCycle0", "blockCycle1", "blockCycle2"),
+    delete: new Button("delete", "deleteOn"),
+  };
 
   private numBirds = 1;
   private opening = false;
+  private mode: "block" | "pig" | "delete" | "move" = "block";
+  private level: Level;
 
   constructor() {
     const margin = 20;
@@ -53,9 +63,11 @@ export class LevelEditor implements View {
       anchor: center,
     });
     pop();
+
     fill(groundColor);
     noStroke();
-    rect(0, height - 29, width, height);
+    rect(0, height - groundThickness, width, height);
+
     fill(0);
     stroke(1);
     textSize(35);
@@ -80,47 +92,48 @@ export class LevelEditor implements View {
 
   mousePressed(): void {
     if (this.opening) {
-      if (this.btn.custom1.mouseOver()) {
-      } else if (this.btn.custom2.mouseOver()) {
-      } else if (this.btn.custom3.mouseOver()) {
-      } else {
-        this.opening = false;
+      this.opening = false;
+      if (this.btn.custom1.hover()) {
+        this.openLevel(1);
+      } else if (this.btn.custom2.hover()) {
+        this.openLevel(2);
+      } else if (this.btn.custom3.hover()) {
+        this.openLevel(3);
       }
-    } else if (this.btn.increment.mouseOver()) {
-      // instead, disable button
+    } else if (this.btn.increment.hover()) {
       this.numBirds = min(this.numBirds + 1, maxBirdsInLevel);
-    } else if (this.btn.decrement.mouseOver()) {
+    } else if (this.btn.decrement.hover()) {
       this.numBirds = max(this.numBirds - 1, minBirdsInLevel);
-    } else if (this.btn.addBlock.mouseOver()) {
-      this.btn.delete.state = "delete";
-    } else if (this.btn.addPig.mouseOver()) {
-      this.btn.delete.state = "delete";
-    } else if (this.btn.open.mouseOver()) {
+    } else if (this.btn.addBlock.hover()) {
+      this.mode = "block";
+    } else if (this.btn.addPig.hover()) {
+      this.mode = "pig";
+    } else if (this.btn.open.hover()) {
       this.opening = true;
-    } else if (this.btn.test.mouseOver()) {
-      // save
-      pushView(Game);
-    } else if (this.btn.cycle.mouseOver()) {
+    } else if (this.btn.test.hover()) {
+      pushViewWith(Game, this.level);
+    } else if (this.btn.cycle.hover()) {
       this.btn.cycle.cycle();
-      this.btn.delete.state = "delete";
-    } else if (this.btn.delete.mouseOver()) {
-      this.btn.delete.cycle();
+      this.mode = "block";
+    } else if (this.btn.delete.hover()) {
+      this.mode = "delete";
     } else {
-      // drag
+      // TODO: drag
+    }
+    this.updateButtons();
+  }
+
+  private updateButtons(): void {
+    this.btn.increment.enabled = this.numBirds < maxBirdsInLevel;
+    this.btn.decrement.enabled = this.numBirds > minBirdsInLevel;
+    this.btn.delete.state = this.mode === "delete" ? "deleteOn" : "delete";
+  }
+
+  private openLevel(n: CustomLevelNumber): void {
+    const level = Level.custom(n);
+    if (this.level !== level) {
+      this.level = level;
+      // reload
     }
   }
-}
-
-type BlockType = "wood" | "steel" | "lead";
-
-class Block {
-  constructor(
-    public x: number,
-    public y: number,
-    private readonly w: number,
-    private readonly h: number,
-    readonly type: BlockType,
-  ) {}
-
-  mouseOver(x: number, y: number): boolean {}
 }

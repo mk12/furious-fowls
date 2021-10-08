@@ -4,9 +4,10 @@ import { buttons } from "./button";
 import { center, topCenter, topLeft } from "./coord";
 import { Game } from "./game";
 import { drawModal, images, TitleView } from "./image";
+import { defaultLevel, loadLevel } from "./level";
 import { LevelEditor } from "./level_editor";
 import { LevelSelect } from "./level_select";
-import { pushView, View, ViewType } from "./view";
+import { pushView, pushViewWith, View, ViewType } from "./view";
 
 export class MainMenu implements View {
   static readonly layers: ViewType[] = [TitleView, this];
@@ -44,16 +45,16 @@ export class MainMenu implements View {
 
   mousePressed(): void {
     if (this.showHelp) {
-      if (this.btn.ok.mouseOver()) {
+      if (this.btn.ok.hover()) {
         this.showHelp = false;
       }
-    } else if (this.btn.play.mouseOver()) {
-      pushView(Game);
-    } else if (this.btn.levelSelect.mouseOver()) {
+    } else if (this.btn.play.hover()) {
+      pushViewWith(Game, loadLevel(defaultLevel()));
+    } else if (this.btn.levelSelect.hover()) {
       pushView(LevelSelect);
-    } else if (this.btn.instructions.mouseOver()) {
+    } else if (this.btn.instructions.hover()) {
       this.showHelp = true;
-    } else if (this.btn.levelEditor.mouseOver()) {
+    } else if (this.btn.levelEditor.hover()) {
       pushView(LevelEditor);
     }
   }

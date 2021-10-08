@@ -6,6 +6,7 @@
     "strict": true,
     "types": [
       "p5/global"
-    ]
+    ],
+    "resolveJsonModule": true
   }
 }

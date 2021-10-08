@@ -3,10 +3,14 @@
 import * as p5Class from "p5";
 import { forEachRev } from "./util";
 
-// A view or screen within the game that implements the p5.js methods.
-export interface View {
+// A view or screen within the game.
+export interface View<Msg = any> {
+  // Called before pushing the view onto the navigation stack and showing it.
+  // The message `msg` is passed from the previous view.
+  onShow?(msg: Msg): void;
+
+  // The p5.js methods.
   draw(): void;
-  onShow?(): void;
   keyPressed?(): void;
   keyReleased?(): void;
   mousePressed?(): void;
@@ -14,9 +18,9 @@ export interface View {
 }
 
 // Metaclass for `View`.
-export interface ViewType {
+export interface ViewType<Msg = any> {
   // Creates a new instance. This will only be called once.
-  new (): View;
+  new (): View<Msg>;
 
   // By defining `layers`, views can compose other views around themselves.
   // Leaving it undefined is equivalent to `[this]`. Layers are drawn from left
@@ -30,7 +34,7 @@ const viewInstances: Map<ViewType, View> = new Map();
 // Returns the specified view, constructing it if this is the first time.
 function getView(type: ViewType): View {
   let view = viewInstances.get(type);
-  if (view == undefined) {
+  if (view === undefined) {
     view = new type();
     viewInstances.set(type, view);
   }
@@ -42,7 +46,7 @@ const stack: View[][] = [];
 
 // Returns the top of the navigation stack.
 function getTop(): View[] {
-  if (stack.length == 0) {
+  if (stack.length === 0) {
     throw new Error("navigation stack is empty");
   }
   return stack[stack.length - 1];
@@ -58,10 +62,22 @@ function expand(type: ViewType): ViewType[] {
 }
 
 // Pushes a view onto the navigation stack, constructing it if necessary.
-export function pushView(type: ViewType): void {
+export function pushView(type: ViewType<void>): void {
   stack.push(expand(type).map(getView));
-  for (const view of getTop()) {
-    view.onShow?.();
+  for (const layer of getTop()) {
+    layer.onShow?.(undefined);
+  }
+}
+
+// Like `pushView`, but for a view that takes a message.
+export function pushViewWith<Msg>(type: ViewType<Msg>, msg: Msg): void {
+  stack.push(expand(type).map(getView));
+  const view = getView(type);
+  view.onShow?.(msg);
+  for (const layer of getTop()) {
+    if (layer !== view) {
+      layer.onShow?.(undefined);
+    }
   }
 }
 
@@ -93,6 +109,7 @@ export interface Options {
 export function initialize(sketch: p5Class, options: Options): void {
   sketch.setup = () => {
     options.setup();
+    // TODO: automatically in push/pop store in location anchor, then restore from that
     pushView(options.view);
     // Wait a bit before preloading to avoid blocking the first paint.
     setTimeout(() => options.preload.flatMap(expand).forEach(getView), 200);

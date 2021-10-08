@@ -1,7 +1,8 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
 import { Image } from "p5";
-import { center, Coord, resolve, topCenter } from "./coord";
+import { center, imageAt, topCenter } from "./coord";
+import { mapKeys } from "./util";
 import { View } from "./view";
 
 const imageCache: Map<string, Image> = new Map();
@@ -10,7 +11,7 @@ const imageCache: Map<string, Image> = new Map();
 export function loadImageByName(name: string): Image {
   name = name.toLowerCase();
   let img = imageCache.get(name);
-  if (img == undefined) {
+  if (img === undefined) {
     img = loadImage(`images/${name}.png`);
     imageCache.set(name, img);
   }
@@ -19,17 +20,7 @@ export function loadImageByName(name: string): Image {
 
 // Returns an object with properties for each named image.
 export function images<T extends string>(...names: T[]): Record<T, Image> {
-  const obj = {} as Record<T, Image>;
-  for (const name of names) {
-    obj[name] = loadImageByName(name);
-  }
-  return obj;
-}
-
-// Draws an image at the given coordinate.
-export function imageAt(img: Image, coord: Coord): void {
-  const { x, y } = resolve(coord, img);
-  image(img, x, y);
+  return mapKeys(names, loadImageByName);
 }
 
 // Dims the background and draws a centered image.

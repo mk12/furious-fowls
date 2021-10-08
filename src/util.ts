@@ -7,14 +7,19 @@ export function forEachRev<T>(arr: T[], f: (item: T) => void): void {
   }
 }
 
-// Zips two arrays of the same length together.
-export function zip<A, B>(a: A[], b: B[]): [A, B][] {
-  if (a.length !== b.length) {
-    throw new Error("array lengths differ");
+// Like `Array.prototype.entries`, but starts counting at one.
+export function oneBasedEntries<T>(arr: T[]): [number, T][] {
+  return arr.map((item, i) => [i + 1, item]);
+}
+
+// Constructs an object that maps `keys` to values produced by `f`.
+export function mapKeys<K extends string, V>(
+  keys: K[],
+  f: (key: K) => V,
+): Record<K, V> {
+  const obj = {} as Record<K, V>;
+  for (const key of keys) {
+    obj[key] = f(key);
   }
-  const result: [A, B][] = [];
-  for (let i = 0; i < a.length; i++) {
-    result.push([a[i], b[i]]);
-  }
-  return result;
+  return obj;
 }

@@ -7,11 +7,6 @@ export function forEachRev<T>(arr: T[], f: (item: T) => void): void {
   }
 }
 
-// Like `Array.prototype.entries`, but starts counting at one.
-export function oneBasedEntries<T>(arr: T[]): [number, T][] {
-  return arr.map((item, i) => [i + 1, item]);
-}
-
 // Constructs an object that maps `keys` to values produced by `f`.
 export function mapKeys<K extends string, V>(
   keys: K[],

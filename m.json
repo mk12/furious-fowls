@@ -1,0 +1,18 @@
+{
+  "range": [1000, 1500],
+  "birds": 2,
+  "pigs": [
+    [55, 30],
+    [165, 30]
+  ],
+  "blocks": [
+    { "pos": [10, 75], "size": [20, 150], "type": "steel" },
+    { "pos": [110, 75], "size": [20, 150], "type": "steel" },
+    { "pos": [210, 75], "size": [20, 150], "type": "steel" },
+    { "pos": [55, 160], "size": [110, 20], "type": "steel" },
+    { "pos": [165, 160], "size": [110, 20], "type": "steel" },
+    { "pos": [60, 245], "size": [20, 150], "type": "wood" },
+    { "pos": [160, 245], "size": [20, 150], "type": "wood" },
+    { "pos": [110, 330], "size": [130, 20], "type": "lead" }
+  ]
+}

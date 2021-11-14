@@ -2,23 +2,26 @@
 
 import { allLevelsStarred } from "./level";
 
-const key = "dense";
-const value = "true";
-
+// Returns true if max density mode is allowed to be used.
 export function maxDensityAllowed(): boolean {
   return allLevelsStarred();
 }
 
-let enabled =
+const key = "dense";
+const value = "true";
+
+let isOn =
   maxDensityAllowed() &&
   new URLSearchParams(location.search).get(key) === value;
 
+// Returns true if max density mode is on.
 export function maxDensityOn(): boolean {
-  return enabled;
+  return isOn;
 }
 
+// Sets the max density mode and saves it in the URL query string.
 export function setMaxDensity(on: boolean): void {
-  enabled = on;
+  isOn = on;
   const params = new URLSearchParams(location.search);
   if (on) {
     params.set(key, value);

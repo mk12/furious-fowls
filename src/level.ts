@@ -14,6 +14,7 @@ import * as standard7 from "./levels/standard_7.json";
 import * as standard8 from "./levels/standard_8.json";
 
 export const numStandardLevels = 8;
+export const numCustomLevels = 3;
 
 export interface LevelDescriptor {
   kind: "standard" | "custom";
@@ -117,11 +118,16 @@ export function allLevelsStarred(): boolean {
 }
 
 // Returns the default standard level to play next.
-export function defaultLevel(): LevelDescriptor {
+export function defaultStandardLevel(): LevelDescriptor {
   return {
     kind: "standard",
     number: (numWon % numStandardLevels) + 1,
   };
+}
+
+// Returns the default custom level to edit.
+export function defaultCustomLevel(): LevelDescriptor {
+  return { kind: "custom", number: 1 };
 }
 
 // Marks the given standard level as won, optionally starred (beat in one shot),

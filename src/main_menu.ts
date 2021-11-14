@@ -4,7 +4,7 @@ import { buttons } from "./button";
 import { center, topCenter, topLeft } from "./coord";
 import { Game } from "./game";
 import { drawModal, images, TitleView } from "./image";
-import { defaultLevel, loadLevel } from "./level";
+import { defaultCustomLevel, defaultStandardLevel, loadLevel } from "./level";
 import { LevelEditor } from "./level_editor";
 import { LevelSelect } from "./level_select";
 import { pushView, pushViewWith, View, ViewType } from "./view";
@@ -32,6 +32,10 @@ export class MainMenu implements View {
     this.btn.ok.place({ x: -210, y: 145, from: center, anchor: topLeft });
   }
 
+  route(): string {
+    return "";
+  }
+
   draw(): void {
     this.btn.play.draw();
     this.btn.levelSelect.draw();
@@ -49,13 +53,13 @@ export class MainMenu implements View {
         this.showHelp = false;
       }
     } else if (this.btn.play.hover()) {
-      pushViewWith(Game, loadLevel(defaultLevel()));
+      pushViewWith(Game, loadLevel(defaultStandardLevel()));
     } else if (this.btn.levelSelect.hover()) {
       pushView(LevelSelect);
     } else if (this.btn.instructions.hover()) {
       this.showHelp = true;
     } else if (this.btn.levelEditor.hover()) {
-      pushView(LevelEditor);
+      pushViewWith(LevelEditor, loadLevel(defaultCustomLevel()));
     }
   }
 }

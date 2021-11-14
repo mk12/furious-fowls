@@ -57,6 +57,10 @@ export class LevelSelect implements View {
     this.btn.checkbox.place({ x: 50, y: -45, from: bottomLeft });
   }
 
+  route(): string {
+    return "level";
+  }
+
   onShow(): void {
     for (const [desc, button] of this.levels) {
       if (desc.kind === "standard") {

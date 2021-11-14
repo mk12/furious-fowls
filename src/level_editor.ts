@@ -11,6 +11,7 @@ import { bottomLeft, center, imageAt, topRight } from "./coord";
 import { Game } from "./game";
 import { drawModal, images } from "./image";
 import { Level } from "./level";
+import { setRoute } from "./route";
 import { pushViewWith, View, ViewType } from "./view";
 
 export class LevelEditor implements View {
@@ -52,6 +53,10 @@ export class LevelEditor implements View {
     this.btn.custom1.place({ x: -85, from: center });
     this.btn.custom2.place({ x: 0, from: center });
     this.btn.custom3.place({ x: 85, from: center });
+  }
+
+  onShow(msg: Level): void {
+    setRoute("edit-1");
   }
 
   draw(): void {
@@ -137,3 +142,6 @@ export class LevelEditor implements View {
     }
   }
 }
+
+// TODO
+// onbeforeunload save level

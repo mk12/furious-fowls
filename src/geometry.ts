@@ -35,7 +35,7 @@ export function inShape(p: Point, shape: Shape, bounds: Rect): boolean {
 
 function inscribe(bounds: Rect): Circle {
   const { x, y, w, h } = bounds;
-  if (w != h) {
+  if (w !== h) {
     throw new Error("bounds must be square");
   }
   const r = w / 2;

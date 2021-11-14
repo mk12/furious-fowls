@@ -2,13 +2,21 @@
 
 import { BackButton } from "./button";
 import { Level } from "./level";
+import { setRoute } from "./route";
 import { View, ViewType } from "./view";
 
 export class Game implements View {
   static readonly layers: ViewType[] = [this, BackButton];
 
   onShow(msg: Level): void {
-    color(255);
+    switch (msg.desc.kind) {
+      case "standard":
+        setRoute(msg.desc.number);
+        break;
+      case "custom":
+        setRoute("custom", msg.desc.number);
+        break;
+    }
   }
 
   draw(): void {

@@ -5,6 +5,9 @@ import { forEachRev } from "./util";
 
 // A view or screen within the game.
 export interface View<Msg = any> {
+  // Returns a string to represnent the view in the URL fragment routing.
+  route(): string;
+
   // Called before pushing the view onto the navigation stack and showing it.
   // The message `msg` is passed from the previous view.
   onShow?(msg: Msg): void;
@@ -79,6 +82,11 @@ export function pushViewWith<Msg>(type: ViewType<Msg>, msg: Msg): void {
       layer.onShow?.(undefined);
     }
   }
+}
+
+// Resets the view with a new message.
+export function resetView<Msg>(view: View<Msg>, msg: Msg): void {
+  view.onShow?.(msg);
 }
 
 // Pops the current view off the navigation stack, returning to the one below.

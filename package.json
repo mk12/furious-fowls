@@ -8,15 +8,15 @@
     "fmt": "prettier -w src/**/*.ts"
   },
   "devDependencies": {
-    "@types/p5": "^0.9.0",
-    "@typescript-eslint/eslint-plugin": "^4.31.0",
-    "@typescript-eslint/parser": "^4.31.0",
-    "esbuild": "^0.12.25",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "prettier": "^2.3.2",
+    "@types/p5": "^1.4.0",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "esbuild": "^0.14.23",
+    "eslint": "^8.9.0",
+    "eslint-config-prettier": "^8.4.0",
+    "prettier": "^2.5.1",
     "prettier-plugin-organize-imports": "^2.3.4",
-    "typescript": "^4.4.2"
+    "typescript": "^4.5.5"
   },
   "prettier": {
     "trailingComma": "all"

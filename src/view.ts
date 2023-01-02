@@ -5,7 +5,7 @@ import { forEachRev } from "./util";
 
 // A view or screen within the game.
 export interface View<Msg = any> {
-  // Returns a string to represnent the view in the URL fragment routing.
+  // Returns a string to represent the view in the URL fragment routing.
   route(): string;
 
   // Called before pushing the view onto the navigation stack and showing it.

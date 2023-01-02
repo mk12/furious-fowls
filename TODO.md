@@ -1,4 +1,4 @@
 - resizing (change viewport, don't scale imges)
 - physics engine
-- LE -> play -> back (LE) -> back (Game; wrong, should be MM)
+- LevelEditor -> play -> back (LevelEditor) -> back (Game; wrong, should be MainMenu)
 - rename some images (e.g. cycle buttons)

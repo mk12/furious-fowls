@@ -59,7 +59,7 @@ export function imageAt(img: Image, coord: Coord): void {
 
 // Draws text at the given coordinate
 export function textAt(str: string, coord: Coord): void {
-  if (coord.anchor != undefined) {
+  if (coord.anchor !== undefined) {
     throw new Error("textAt does not support anchors");
   }
   const { x, y } = resolve(coord, { width: 0, height: 0 });

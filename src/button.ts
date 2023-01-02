@@ -59,7 +59,7 @@ export class Button<S extends string> {
 
   // Places the button. Must be called before `draw`.
   place(coord: Coord, shape?: Shape): this {
-    if (this.placement != undefined) {
+    if (this.placement !== undefined) {
       throw new Error("already placed button");
     }
     this.placement = { coord, shape: shape ?? "rect" };

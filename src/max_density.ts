@@ -1,5 +1,6 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
+import { registerInitializer } from "./initialize";
 import { allLevelsStarred } from "./level";
 
 // Returns true if max density mode is allowed to be used.
@@ -10,9 +11,13 @@ export function maxDensityAllowed(): boolean {
 const key = "dense";
 const value = "true";
 
-let isOn =
-  maxDensityAllowed() &&
-  new URLSearchParams(location.search).get(key) === value;
+let isOn: boolean;
+
+registerInitializer(() => {
+  isOn =
+    maxDensityAllowed() &&
+    new URLSearchParams(location.search).get(key) === value;
+});
 
 // Returns true if max density mode is on.
 export function maxDensityOn(): boolean {

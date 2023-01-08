@@ -7,9 +7,9 @@ export interface Coord {
   // Pixel coordinates of the anchor relative to the reference.
   x?: number;
   y?: number;
-  // Element anchor point.
+  // Element anchor point (defaults to `topLeft`).
   anchor?: Ref;
-  // Canvas reference point.
+  // Canvas reference point (defaults to `topLeft`).
   from?: Ref;
 }
 

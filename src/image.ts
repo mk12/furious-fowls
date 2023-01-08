@@ -34,7 +34,7 @@ export function drawModal(img: Image): void {
 }
 
 // Draws the "Furious Fowls" title at the top.
-export class TitleView implements View {
+export class TitleView implements View<void> {
   private readonly img = images("title");
 
   draw(): void {

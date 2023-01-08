@@ -7,9 +7,9 @@ import { drawModal, images, TitleView } from "./image";
 import { defaultCustomLevel, defaultStandardLevel, loadLevel } from "./level";
 import { LevelEditor } from "./level_editor";
 import { LevelSelect } from "./level_select";
-import { pushView, pushViewWith, View, ViewType } from "./view";
+import { pushView, View, ViewType } from "./view";
 
-export class MainMenu implements View {
+export class MainMenu implements View<void> {
   static readonly layers: ViewType[] = [TitleView, this];
 
   private readonly img = images("help");
@@ -53,13 +53,13 @@ export class MainMenu implements View {
         this.showHelp = false;
       }
     } else if (this.btn.play.hover()) {
-      pushViewWith(Game, loadLevel(defaultStandardLevel()));
+      pushView(Game, loadLevel(defaultStandardLevel()));
     } else if (this.btn.levelSelect.hover()) {
       pushView(LevelSelect);
     } else if (this.btn.instructions.hover()) {
       this.showHelp = true;
     } else if (this.btn.levelEditor.hover()) {
-      pushViewWith(LevelEditor, loadLevel(defaultCustomLevel()));
+      pushView(LevelEditor, loadLevel(defaultCustomLevel()));
     }
   }
 }

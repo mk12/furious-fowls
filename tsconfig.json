@@ -8,5 +8,5 @@
     ],
     "moduleResolution": "nodenext",
     "resolveJsonModule": true
-  },
+  }
 }

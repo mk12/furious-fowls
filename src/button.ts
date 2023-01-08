@@ -130,7 +130,7 @@ export class Button<S extends string> {
 }
 
 // A view that puts a back button in the top-left corner.
-export class BackButton implements View {
+export class BackButton implements View<void> {
   private readonly btn = buttons("back");
 
   constructor() {

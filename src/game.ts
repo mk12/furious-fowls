@@ -5,7 +5,7 @@ import { Level } from "./level";
 import { setRoute } from "./route";
 import { View, ViewType } from "./view";
 
-export class Game implements View {
+export class Game implements View<Level> {
   static readonly layers: ViewType[] = [this, BackButton];
 
   onShow(msg: Level): void {

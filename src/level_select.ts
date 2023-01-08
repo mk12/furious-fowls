@@ -11,9 +11,9 @@ import {
   numStandardLevels,
 } from "./level";
 import { maxDensityAllowed, maxDensityOn, setMaxDensity } from "./max_density";
-import { pushViewWith as pushViewMsg, View, ViewType } from "./view";
+import { pushView, View, ViewType } from "./view";
 
-export class LevelSelect implements View {
+export class LevelSelect implements View<void> {
   static readonly layers: ViewType[] = [TitleView, this, BackButton];
 
   private readonly img = images("selectMessage");
@@ -99,7 +99,7 @@ export class LevelSelect implements View {
   mousePressed(): void {
     for (const [desc, button] of this.levels) {
       if (button.hover()) {
-        pushViewMsg(Game, loadLevel(desc));
+        pushView(Game, loadLevel(desc));
         return;
       }
     }

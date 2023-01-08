@@ -1,4 +1,4 @@
-// Cop.yright 2021 Mitchell Kember. Subject to the MIT License.
+// Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
 export interface Point {
   x: number;

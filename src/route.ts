@@ -5,7 +5,7 @@ import { loadLevel, numCustomLevels, numStandardLevels } from "./level";
 import { LevelEditor } from "./level_editor";
 import { LevelSelect } from "./level_select";
 import { MainMenu } from "./main_menu";
-import { pushView, pushViewWith } from "./view";
+import { pushView } from "./view";
 
 export function routeApp(): void {
   pushView(MainMenu);
@@ -15,17 +15,17 @@ export function routeApp(): void {
   } else if (hash.startsWith("edit-")) {
     const number = parseInt(hash.replace("edit-", ""));
     if (number >= 1 && number <= numCustomLevels) {
-      pushViewWith(LevelEditor, loadLevel({ kind: "custom", number }));
+      pushView(LevelEditor, loadLevel({ kind: "custom", number }));
     }
   } else if (hash.startsWith("custom-")) {
     const number = parseInt(hash.replace("custom-", ""));
     if (number >= 1 && number <= numCustomLevels) {
-      pushViewWith(Game, loadLevel({ kind: "custom", number }));
+      pushView(Game, loadLevel({ kind: "custom", number }));
     }
   } else {
     const number = parseInt(hash);
     if (number >= 1 && number <= numStandardLevels) {
-      pushViewWith(Game, loadLevel({ kind: "standard", number }));
+      pushView(Game, loadLevel({ kind: "standard", number }));
     }
   }
 }

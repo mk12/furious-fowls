@@ -1,6 +1,7 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
 import { Point, Rect } from "./geometry";
+import { registerInitializer } from "./initialize";
 import * as custom1 from "./levels/custom_1.json";
 import * as custom2 from "./levels/custom_2.json";
 import * as custom3 from "./levels/custom_3.json";
@@ -43,13 +44,11 @@ export interface Block extends Rect {
   type: BlockType;
 }
 
-// TODO: Remove once TypeScript can import json files "as const".
+// TODO: Remove `as LevelData[]` on `standardLevels` and `customLevels` once
+// TypeScript can import json files "as const":
 // https://github.com/microsoft/TypeScript/issues/32063
-type WeakLevelData = Omit<LevelData, "blocks"> & {
-  blocks: (Rect & { type: string })[];
-};
 
-const standardLevels: WeakLevelData[] = [
+const standardLevels = [
   standard1,
   standard2,
   standard3,
@@ -58,9 +57,9 @@ const standardLevels: WeakLevelData[] = [
   standard6,
   standard7,
   standard8,
-];
+] as LevelData[];
 
-const defaultCustomLevels: WeakLevelData[] = [custom1, custom2, custom3];
+const defaultCustomLevels = [custom1, custom2, custom3] as LevelData[];
 
 function customKey(n: number): string {
   return `custom_${n}`;
@@ -74,10 +73,12 @@ export function loadLevel(desc: LevelDescriptor): Level {
       data = standardLevels[idx];
       break;
     case "custom":
-      data = getItem(customKey(desc.number)) ?? defaultCustomLevels[idx];
+      data =
+        (getItem(customKey(desc.number)) as LevelData) ??
+        defaultCustomLevels[idx];
       break;
   }
-  return { desc, data: data as LevelData };
+  return { desc, data };
 }
 
 export function saveLevel(level: Level): void {
@@ -95,8 +96,13 @@ export type LevelStatus = "locked" | "open" | "starred";
 const numWonKey = "won";
 const starredKey = "starred";
 
-let numWon = (getItem(numWonKey) as number) ?? 0;
-const starred = new Set((getItem(starredKey) as number[]) ?? []);
+let numWon: number;
+let starred: Set<number>;
+
+registerInitializer(() => {
+  numWon = (getItem(numWonKey) as number) ?? 0;
+  starred = new Set((getItem(starredKey) as number[]) ?? []);
+});
 
 // Returns the status of the given standard level.
 export function getLevelStatus({ kind, number }: LevelDescriptor): LevelStatus {

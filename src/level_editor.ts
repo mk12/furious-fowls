@@ -12,7 +12,7 @@ import { Game } from "./game";
 import { drawModal, images } from "./image";
 import { Level } from "./level";
 import { setRoute } from "./route";
-import { pushViewWith, View, ViewType } from "./view";
+import { pushView, View, ViewType } from "./view";
 
 export class LevelEditor implements View {
   static readonly layers: ViewType[] = [this, BackButton];
@@ -53,6 +53,7 @@ export class LevelEditor implements View {
     this.btn.custom1.place({ x: -85, from: center });
     this.btn.custom2.place({ x: 0, from: center });
     this.btn.custom3.place({ x: 85, from: center });
+    this.level = undefined as any; // FIXME
   }
 
   onShow(msg: Level): void {
@@ -116,7 +117,7 @@ export class LevelEditor implements View {
     } else if (this.btn.open.hover()) {
       this.opening = true;
     } else if (this.btn.test.hover()) {
-      pushViewWith(Game, this.level);
+      pushView(Game, this.level);
     } else if (this.btn.cycle.hover()) {
       this.btn.cycle.cycle();
       this.mode = "block";
@@ -134,12 +135,12 @@ export class LevelEditor implements View {
     this.btn.delete.state = this.mode === "delete" ? "deleteOn" : "delete";
   }
 
-  private openLevel(n: CustomLevelNumber): void {
-    const level = Level.custom(n);
-    if (this.level !== level) {
-      this.level = level;
-      // reload
-    }
+  private openLevel(n: number): void {
+    // const level = Level.custom(n);
+    // if (this.level !== level) {
+    //   this.level = level;
+    //   // reload
+    // }
   }
 }
 

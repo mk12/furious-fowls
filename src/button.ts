@@ -6,7 +6,7 @@ import { Coord, imageAt, Ref, resolve, topLeft } from "./coord";
 import { inShape, Shape } from "./geometry";
 import { loadImageByName } from "./image";
 import { mapKeys } from "./util";
-import { popView, View } from "./view";
+import { Layer, popView } from "./view";
 
 // Returns an object with properties for each named button.
 export function buttons<S extends string>(...names: S[]): Record<S, Button<S>> {
@@ -129,8 +129,8 @@ export class Button<S extends string> {
   }
 }
 
-// A view that puts a back button in the top-left corner.
-export class BackButton implements View<void> {
+// Puts a back button in the top-left corner.
+export class BackButton implements Layer {
   private readonly btn = buttons("back");
 
   constructor() {

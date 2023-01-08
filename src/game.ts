@@ -3,10 +3,14 @@
 import { BackButton } from "./button";
 import { Level } from "./level";
 import { setRoute } from "./route";
-import { View, ViewType } from "./view";
+import { LayerType, View } from "./view";
 
 export class Game implements View<Level> {
-  static readonly layers: ViewType[] = [this, BackButton];
+  static readonly layers: LayerType[] = [this, BackButton];
+
+  route(): string {
+    return "game";
+  }
 
   onShow(msg: Level): void {
     switch (msg.desc.kind) {

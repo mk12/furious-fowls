@@ -8,7 +8,7 @@ export function registerInitializer(init: VoidFunction) {
 }
 
 // Runs all registered initializers.
-export function initialize() {
+export function runInitializers() {
     for (const init of initializers) {
         init();
     }

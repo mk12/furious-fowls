@@ -2,6 +2,7 @@
 
 import { Point, Rect } from "./geometry";
 import { registerInitializer } from "./initialize";
+
 import * as custom1 from "./levels/custom_1.json";
 import * as custom2 from "./levels/custom_2.json";
 import * as custom3 from "./levels/custom_3.json";

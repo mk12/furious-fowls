@@ -3,7 +3,7 @@
 import { Image } from "p5";
 import { center, imageAt, topCenter } from "./coord";
 import { mapKeys } from "./util";
-import { View } from "./view";
+import { Layer } from "./view";
 
 const imageCache: Map<string, Image> = new Map();
 
@@ -34,7 +34,7 @@ export function drawModal(img: Image): void {
 }
 
 // Draws the "Furious Fowls" title at the top.
-export class TitleView implements View<void> {
+export class Title implements Layer {
   private readonly img = images("title");
 
   draw(): void {

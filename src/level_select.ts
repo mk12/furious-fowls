@@ -3,7 +3,7 @@
 import { BackButton, Button, buttons } from "./button";
 import { bottomCenter, bottomLeft, center, imageAt, textAt } from "./coord";
 import { Game } from "./game";
-import { images, TitleView } from "./image";
+import { images, Title } from "./image";
 import {
   getLevelStatus,
   LevelDescriptor,
@@ -11,10 +11,10 @@ import {
   numStandardLevels,
 } from "./level";
 import { maxDensityAllowed, maxDensityOn, setMaxDensity } from "./max_density";
-import { pushView, View, ViewType } from "./view";
+import { LayerType, pushView, View } from "./view";
 
 export class LevelSelect implements View<void> {
-  static readonly layers: ViewType[] = [TitleView, this, BackButton];
+  static readonly layers: LayerType[] = [Title, this, BackButton];
 
   private readonly img = images("selectMessage");
   private readonly btn = {
@@ -58,7 +58,7 @@ export class LevelSelect implements View<void> {
   }
 
   route(): string {
-    return "level";
+    return "levels";
   }
 
   onShow(): void {

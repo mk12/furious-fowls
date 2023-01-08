@@ -33,6 +33,7 @@ export function setMaxDensity(on: boolean): void {
   } else {
     params.delete(key);
   }
+  console.log(`${location.pathname}${location.hash}?${params}`)
   history.replaceState(
     {},
     "",

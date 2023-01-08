@@ -11,11 +11,10 @@ import { bottomLeft, center, imageAt, topRight } from "./coord";
 import { Game } from "./game";
 import { drawModal, images } from "./image";
 import { Level } from "./level";
-import { setRoute } from "./route";
-import { pushView, View, ViewType } from "./view";
+import { LayerType, pushView, View } from "./view";
 
-export class LevelEditor implements View {
-  static readonly layers: ViewType[] = [this, BackButton];
+export class LevelEditor implements View<Level> {
+  static readonly layers: LayerType[] = [this, BackButton];
 
   private readonly img = images("openDialog", "bird", "slingshot");
   private readonly btn = {
@@ -56,8 +55,12 @@ export class LevelEditor implements View {
     this.level = undefined as any; // FIXME
   }
 
+  route(): string {
+    return "editor";
+  }
+
   onShow(msg: Level): void {
-    setRoute("edit-1");
+    // setRoute("edit-1");
   }
 
   draw(): void {

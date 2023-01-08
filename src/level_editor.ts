@@ -55,12 +55,11 @@ export class LevelEditor implements View<Level> {
     this.level = undefined as any; // FIXME
   }
 
-  route(): string {
-    return "editor";
+  route(msg: Level): string {
+    return `edit/${msg.desc.number}`;
   }
 
   onShow(msg: Level): void {
-    // setRoute("edit-1");
   }
 
   draw(): void {

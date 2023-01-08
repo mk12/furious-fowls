@@ -78,6 +78,20 @@ function layersFor(type: ViewType): LayerType[] {
   return type.layers ?? [type];
 }
 
+// Actions that the router can observe.
+export type Action =
+  | { kind: "push"; label: string }
+  | { kind: "replace"; label: string }
+  | { kind: "pop" };
+
+// The router callback. We use this indirection to avoid an import cycle.
+let tellRouter: (action: Action) => void;
+
+// Registers the router callback.
+export function registerRouter(callback: typeof tellRouter): void {
+  tellRouter = callback;
+}
+
 // Pushes a view onto the navigation stack, constructing it if necessary.
 export function pushView<Msg>(
   type: ViewType<Msg>,
@@ -86,11 +100,13 @@ export function pushView<Msg>(
   const view = getLayer(type) as View;
   const layers = layersFor(type).map(getLayer);
   stack.push({ view, layers });
+  tellRouter({ kind: "push", label: view.route(msg) });
   view.onShow?.(msg);
 }
 
 // Resets the view with a new message.
 export function resetView<Msg>(view: View<Msg>, msg: Msg): void {
+  tellRouter({ kind: "replace", label: view.route(msg) });
   view.onShow?.(msg);
 }
 
@@ -100,6 +116,7 @@ export function popView(): void {
   if (stack.length <= 1) {
     throw new Error("cannot pop to an empty navigation stack");
   }
+  tellRouter({ kind: "pop" });
   stack.pop();
 }
 

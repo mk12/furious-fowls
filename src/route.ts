@@ -5,15 +5,15 @@ import { loadLevel, numCustomLevels, numStandardLevels } from "./level";
 import { LevelEditor } from "./level_editor";
 import { LevelSelect } from "./level_select";
 import { MainMenu } from "./main_menu";
-import { pushView } from "./view";
+import { Action, pushView, registerRouter } from "./view";
 
 export function routeApp(): void {
-  pushView(MainMenu);
   const hash = location.hash.replace("#", "");
+  pushView(MainMenu);
   if (hash === "levels") {
     pushView(LevelSelect);
-  } else if (hash.startsWith("edit-")) {
-    const number = parseInt(hash.replace("edit-", ""));
+  } else if (hash.startsWith("edit/")) {
+    const number = parseInt(hash.replace("edit/", ""));
     if (number >= 1 && number <= numCustomLevels) {
       pushView(LevelEditor, loadLevel({ kind: "custom", number }));
     }
@@ -30,6 +30,29 @@ export function routeApp(): void {
   }
 }
 
-export function setRoute(...elements: (string | number)[]): void {
-  location.hash = elements.join("-");
+const route: string[] = [];
+
+registerRouter((action: Action) => {
+  switch (action.kind) {
+    case "push":
+      if (action.label !== "") {
+        route.push(action.label);
+      }
+      break;
+    case "replace":
+      route[route.length - 1] = action.label;
+      break;
+    case "pop":
+      route.pop();
+      break;
+  }
+  updateRoute();
+});
+
+function updateRoute(): void {
+  location.hash = route.join("/");
 }
+
+// export function setRoute(...elements: (string | number)[]): void {
+//   location.hash = elements.join("-");
+// }

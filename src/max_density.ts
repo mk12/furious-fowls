@@ -13,6 +13,7 @@ const value = "true";
 
 let isOn: boolean;
 
+// TODO: relies on this happening after level.ts one.
 registerInitializer(() => {
   isOn =
     maxDensityAllowed() &&

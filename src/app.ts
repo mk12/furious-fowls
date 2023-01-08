@@ -5,8 +5,8 @@ import { Game } from "./game";
 import { runInitializers } from "./initialize";
 import { LevelEditor } from "./level_editor";
 import { LevelSelect } from "./level_select";
-import { MainMenu } from "./main_menu";
-import { createSketch, pushView } from "./view";
+import { routeApp } from "./route";
+import { createSketch } from "./view";
 
 createSketch(window as any, {
   preload: [Game, LevelSelect, LevelEditor],
@@ -14,7 +14,7 @@ createSketch(window as any, {
     runInitializers();
     createCanvas(800, 600);
     textFont("Arial");
-    pushView(MainMenu);
+    routeApp();
   },
   draw() {
     background(backgroundColor);

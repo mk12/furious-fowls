@@ -1,5 +1,7 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
+import { assert } from "./util";
+
 export interface Point {
   x: number;
   y: number;
@@ -35,9 +37,11 @@ export function inShape(p: Point, shape: Shape, bounds: Rect): boolean {
 
 function inscribe(bounds: Rect): Circle {
   const { x, y, w, h } = bounds;
-  if (w !== h) {
-    throw new Error("bounds must be square");
-  }
+  assert(w === h, "bounds must be square");
   const r = w / 2;
   return { x: x + r, y: y + r, r };
+}
+
+export function drawRect({ x, y, w, h }: Rect): void {
+  rect(x, y, w, h);
 }

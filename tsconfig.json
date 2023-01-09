@@ -3,10 +3,13 @@
     "target": "esnext",
     "rootDir": "./src",
     "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
     "types": [
       "p5/global"
     ],
     "moduleResolution": "nodenext",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "experimentalDecorators": true
   }
 }

@@ -11,10 +11,13 @@ import {
   numStandardLevels,
 } from "./level";
 import { maxDensityAllowed, maxDensityOn, setMaxDensity } from "./max_density";
-import { LayerType, pushView, View } from "./view";
+import { pushScreen, Screen } from "./screen";
+import { preload } from "./singleton";
+import { View } from "./view";
 
-export class LevelSelect implements View<void> {
-  static readonly layers: LayerType[] = [Title, this, BackButton];
+@preload
+export class LevelSelect implements Screen<void> {
+  readonly view = new View(Title, this, BackButton);
 
   private readonly img = images("selectMessage");
   private readonly btn = {
@@ -57,10 +60,6 @@ export class LevelSelect implements View<void> {
     this.btn.checkbox.place({ x: 50, y: -45, from: bottomLeft });
   }
 
-  route(): string {
-    return "levels";
-  }
-
   onShow(): void {
     for (const [desc, button] of this.levels) {
       if (desc.kind === "standard") {
@@ -98,12 +97,12 @@ export class LevelSelect implements View<void> {
 
   mousePressed(): void {
     for (const [desc, button] of this.levels) {
-      if (button.hover()) {
-        pushView(Game, loadLevel(desc));
+      if (button.mouseOver()) {
+        pushScreen(Game, loadLevel(desc));
         return;
       }
     }
-    if (this.btn.checkbox.hover()) {
+    if (this.btn.checkbox.mouseOver()) {
       this.btn.checkbox.toggle();
       setMaxDensity(this.btn.checkbox.state === "checkedbox");
     }

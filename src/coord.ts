@@ -1,6 +1,7 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
 import { Image } from "p5";
+import { assert } from "./util";
 
 // A coordinate positions a UI element by anchor point.
 export interface Coord {
@@ -59,9 +60,7 @@ export function imageAt(img: Image, coord: Coord): void {
 
 // Draws text at the given coordinate
 export function textAt(str: string, coord: Coord): void {
-  if (coord.anchor !== undefined) {
-    throw new Error("textAt does not support anchors");
-  }
+  assert(coord.anchor === undefined, "textAt does not support anchors");
   const { x, y } = resolve(coord, { width: 0, height: 0 });
   text(str, x, y);
 }

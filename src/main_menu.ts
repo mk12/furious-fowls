@@ -1,24 +1,20 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
 import { buttons } from "./button";
-import { center, topCenter, topLeft } from "./coord";
+import { center, Coord, topCenter, topLeft } from "./coord";
 import { Game } from "./game";
 import { drawModal, images, Title } from "./image";
 import { defaultCustomLevel, defaultStandardLevel, loadLevel } from "./level";
 import { LevelEditor } from "./level_editor";
 import { LevelSelect } from "./level_select";
-import {
-  EventResult,
-  insertLayer,
-  Layer,
-  LayerType,
-  pushView,
-  removeLayer,
-  View,
-} from "./view";
+import { getView, pushScreen, Screen } from "./screen";
+import { preload } from "./singleton";
+import { forEachValue } from "./util";
+import { Handle, Layer, View } from "./view";
 
-export class MainMenu implements View<void> {
-  static readonly layers: LayerType[] = [Title, this];
+@preload
+export class MainMenu implements Screen<void> {
+  readonly view = new View(Title, this);
 
   private readonly btn = buttons(
     "play",
@@ -29,31 +25,32 @@ export class MainMenu implements View<void> {
 
   constructor() {
     let i = 0;
-    const next = () => ({ y: 230 + i++ * 80, from: topCenter, anchor: center });
-    Object.values(this.btn).forEach((b) => b.place(next()));
-  }
-
-  route(): string {
-    return "";
+    const next = (): Coord => ({
+      y: 230 + i++ * 80,
+      from: topCenter,
+      anchor: center,
+    });
+    forEachValue(this.btn, (b) => b.place(next()));
   }
 
   draw(): void {
-    Object.values(this.btn).forEach((b) => b.draw());
+    forEachValue(this.btn, (b) => b.draw());
   }
 
-  mousePressed() {
-    if (this.btn.play.hover()) {
-      pushView(Game, loadLevel(defaultStandardLevel()));
-    } else if (this.btn.levelSelect.hover()) {
-      pushView(LevelSelect);
-    } else if (this.btn.instructions.hover()) {
-      insertLayer(Instructions, { after: this });
-    } else if (this.btn.levelEditor.hover()) {
-      pushView(LevelEditor, loadLevel(defaultCustomLevel()));
+  mousePressed(): void {
+    if (this.btn.play.mouseOver()) {
+      pushScreen(Game, loadLevel(defaultStandardLevel()));
+    } else if (this.btn.levelSelect.mouseOver()) {
+      pushScreen(LevelSelect);
+    } else if (this.btn.instructions.mouseOver()) {
+      this.view.addLayer(Instructions);
+    } else if (this.btn.levelEditor.mouseOver()) {
+      pushScreen(LevelEditor, defaultCustomLevel().number);
     }
   }
 }
 
+@preload
 class Instructions implements Layer {
   private readonly img = images("help");
   private readonly btn = buttons("ok");
@@ -67,10 +64,10 @@ class Instructions implements Layer {
     this.btn.ok.draw();
   }
 
-  mousePressed(): EventResult {
-    if (this.btn.ok.hover()) {
-      removeLayer(this);
+  mousePressed(handle: Handle): void {
+    if (this.btn.ok.mouseOver()) {
+      getView().removeLayer(this);
     }
-    return "stopPropagation";
+    handle.stopPropagation();
   }
 }

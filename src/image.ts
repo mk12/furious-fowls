@@ -2,6 +2,7 @@
 
 import { Image } from "p5";
 import { center, imageAt, topCenter } from "./coord";
+import { preload } from "./singleton";
 import { mapKeys } from "./util";
 import { Layer } from "./view";
 
@@ -34,6 +35,7 @@ export function drawModal(img: Image): void {
 }
 
 // Draws the "Furious Fowls" title at the top.
+@preload
 export class Title implements Layer {
   private readonly img = images("title");
 

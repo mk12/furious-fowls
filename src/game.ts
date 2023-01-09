@@ -1,21 +1,25 @@
 // Copyright 2021 Mitchell Kember. Subject to the MIT License.
 
 import { BackButton } from "./button";
-import { Level } from "./level";
-import { LayerType, View } from "./view";
+import { Level, LevelDescriptor } from "./level";
+import { Screen } from "./screen";
+import { preload } from "./singleton";
+import { must } from "./util";
+import { View } from "./view";
 
-export class Game implements View<Level> {
-  static readonly layers: LayerType[] = [this, BackButton];
+@preload
+export class Game implements Screen<Level> {
+  readonly view = new View(this, BackButton);
 
-  route(msg: Level): string {
-    let prefix = "";
-    if (msg.desc.kind === "custom") {
-      prefix = "custom-";
-    }
-    return `${prefix}${msg.desc.number}`;
+  private level?: Level;
+
+  onShow(level: Level): void {
+    this.level = level;
   }
 
-  onShow(msg: Level): void {}
+  get levelDesc(): LevelDescriptor {
+    return must(this.level).desc;
+  }
 
   draw(): void {
     color(255);

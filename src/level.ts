@@ -14,6 +14,7 @@ import * as standard5 from "./levels/standard_5.json";
 import * as standard6 from "./levels/standard_6.json";
 import * as standard7 from "./levels/standard_7.json";
 import * as standard8 from "./levels/standard_8.json";
+import { assert } from "./util";
 
 export const numStandardLevels = 8;
 export const numCustomLevels = 3;
@@ -83,9 +84,7 @@ export function loadLevel(desc: LevelDescriptor): Level {
 }
 
 export function saveLevel(level: Level): void {
-  if (level.desc.kind !== "custom") {
-    throw new Error("can only save custom levels");
-  }
+  assert(level.desc.kind === "custom", "can only save custom levels");
   storeItem(customKey(level.desc.number), level.data);
 }
 
@@ -107,9 +106,7 @@ registerInitializer(() => {
 
 // Returns the status of the given standard level.
 export function getLevelStatus({ kind, number }: LevelDescriptor): LevelStatus {
-  if (kind !== "standard") {
-    throw new Error("only standard levels have a status");
-  }
+  assert(kind === "standard", "only standard levels have a status");
   if (starred.has(number)) {
     return "starred";
   }
@@ -143,9 +140,7 @@ export function setLevelWon(
   { kind, number }: LevelDescriptor,
   star: boolean,
 ): LevelDescriptor | undefined {
-  if (kind !== "standard") {
-    throw new Error("only standard levels have a status");
-  }
+  assert(kind === "standard", "only standard levels can be marked won");
   numWon = max(numWon, number);
   storeItem(numWonKey, numWon);
   if (star) {

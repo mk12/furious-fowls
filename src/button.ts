@@ -5,8 +5,10 @@ import { buttonMargin } from "./constants";
 import { Coord, imageAt, Ref, resolve, topLeft } from "./coord";
 import { inShape, Shape } from "./geometry";
 import { loadImageByName } from "./image";
-import { mapKeys } from "./util";
-import { Layer, popView } from "./view";
+import { popScreen } from "./screen";
+import { preload } from "./singleton";
+import { assert, mapKeys, must } from "./util";
+import { Handle, Layer } from "./view";
 
 // Returns an object with properties for each named button.
 export function buttons<S extends string>(...names: S[]): Record<S, Button<S>> {
@@ -23,9 +25,8 @@ interface ImagePair {
 // - Loads normal image and related "_hover" image automatically.
 // - Detects mouseover based on rectangular or circular shape.
 // - Can be disabled by setting `enabled` to false.
-// - Supports multiple states, encoded in the type paramter `S`. Each state has
-//   a different image. A state can be designated as always disabled. States are
-//   useful for checkboxes or for cycling between several options.
+// - Supports states with different images, encoded in the type paramter `S`.
+// - A state can be designated as always disabled.
 //
 export class Button<S extends string> {
   state: S;
@@ -38,8 +39,8 @@ export class Button<S extends string> {
   };
 
   constructor(...states: (S | { disabled: S })[]) {
-    this.states = [] as any;
-    this.images = {} as any;
+    this.states = [] as S[];
+    this.images = {} as Record<S, ImagePair>;
     const get = (s: S | { disabled: S }): [S, boolean] =>
       typeof s === "string" ? [s, false] : [s.disabled, true];
     for (const [state, disabled] of states.map(get)) {
@@ -59,9 +60,7 @@ export class Button<S extends string> {
 
   // Places the button. Must be called before `draw`.
   place(coord: Coord, shape?: Shape): this {
-    if (this.placement !== undefined) {
-      throw new Error("already placed button");
-    }
+    assert(this.placement === undefined, "button already placed");
     this.placement = { coord, shape: shape ?? "rect" };
     return this;
   }
@@ -74,62 +73,56 @@ export class Button<S extends string> {
 
   // Alias for `cycle` when there are two states.
   toggle(): void {
-    if (this.states.length !== 2) {
-      throw new Error("toggle requires 2 states");
-    }
+    assert(this.states.length === 2, "toggle requires 2 states");
     this.cycle();
   }
 
-  private pair(): ImagePair {
-    return this.images[this.state];
+  private get normal(): Image {
+    return this.images[this.state].normal;
   }
 
-  private coord(): Coord {
-    if (this.placement === undefined) {
-      throw new Error("button not placed");
-    }
+  private get hover(): Image | undefined {
+    return this.images[this.state].hover;
+  }
+
+  private get coord(): Coord {
+    assert(this.placement !== undefined, "button not placed");
     return this.placement.coord;
   }
 
-  private shape(): Shape {
-    if (this.placement === undefined) {
-      throw new Error("button not placed");
-    }
+  private get shape(): Shape {
+    assert(this.placement !== undefined, "button not placed");
     return this.placement.shape;
   }
 
   // Resolves the absolute coordinates of the button.
   resolve(target: Ref): { x: number; y: number } {
-    const img = this.pair().normal;
-    return resolve(this.coord(), img, target);
+    return resolve(this.coord, this.normal, target);
   }
 
   // Draws the button.
   draw(): void {
-    if (this.coord === undefined) {
-      throw new Error("button not placed");
-    }
-    const pair = this.pair();
-    imageAt(this.hover() ? pair.hover! : pair.normal, this.coord());
+    assert(this.placement !== undefined, "button not placed");
+    imageAt(this.mouseOver() ? must(this.hover) : this.normal, this.coord);
   }
 
   // Returns true if the button is enabled and the mouse is hovering over it.
-  hover(): boolean {
-    const pair = this.pair();
-    if (!this.enabled || pair.hover === undefined) {
+  mouseOver(): boolean {
+    if (!this.enabled || this.hover === undefined) {
       return false;
     }
     const mouse = { x: mouseX, y: mouseY };
     const bounds = {
       ...this.resolve(topLeft),
-      w: pair.normal.width,
-      h: pair.normal.height,
+      w: this.normal.width,
+      h: this.normal.height,
     };
-    return inShape(mouse, this.shape(), bounds);
+    return inShape(mouse, this.shape, bounds);
   }
 }
 
 // Puts a back button in the top-left corner.
+@preload
 export class BackButton implements Layer {
   private readonly btn = buttons("back");
 
@@ -141,9 +134,10 @@ export class BackButton implements Layer {
     this.btn.back.draw();
   }
 
-  mousePressed(): void {
-    if (this.btn.back.hover()) {
-      popView();
+  mousePressed(handle: Handle): void {
+    if (this.btn.back.mouseOver()) {
+      popScreen();
+      handle.stopPropagation();
     }
   }
 }

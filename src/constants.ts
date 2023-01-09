@@ -23,6 +23,9 @@ export const preloadDelayMs = 200;
 export const minBirdsInLevel = 1;
 export const maxBirdsInLevel = 5;
 
-// Physics
+// Animation
 export const panSpeed = 8;
+
+// Dimensions
 export const worldWidth = 2000;
+export const pigRadius = 30;

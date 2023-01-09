@@ -18,13 +18,6 @@ export function must<T>(value: T | undefined): T {
   return value;
 }
 
-// Like `Array.prototype.forEach`, but in reverse.
-export function forEachRev<T>(arr: T[], f: (item: T) => void): void {
-  for (let i = arr.length - 1; i >= 0; i--) {
-    f(arr[i]);
-  }
-}
-
 // Runs a function on each value of an object.
 export function forEachValue<T>(
   obj: { [key: string]: T },
@@ -43,4 +36,16 @@ export function mapKeys<K extends string, V>(
     obj[key] = f(key);
   }
   return obj;
+}
+
+// Pushes a shallow copy of an element to the end of the array.
+export function copyToEnd<T>(array: T[], index: number): void {
+  array.push(Object.assign({}, array[index]));
+}
+
+// Calls `draw` in a new drawing context, restoring it afterwards.
+export function withContext(draw: VoidFunction): void {
+  push();
+  draw();
+  pop();
 }

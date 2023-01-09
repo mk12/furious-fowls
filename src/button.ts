@@ -3,7 +3,7 @@
 import { Image } from "p5";
 import { buttonMargin } from "./constants";
 import { Coord, imageAt, Ref, resolve, topLeft } from "./coord";
-import { inShape, Shape } from "./geometry";
+import { inShape, mouse, Shape } from "./geometry";
 import { loadImageByName } from "./image";
 import { popScreen } from "./screen";
 import { preload } from "./singleton";
@@ -111,13 +111,12 @@ export class Button<S extends string> {
     if (!this.enabled || this.hover === undefined) {
       return false;
     }
-    const mouse = { x: mouseX, y: mouseY };
     const bounds = {
       ...this.resolve(topLeft),
       w: this.normal.width,
       h: this.normal.height,
     };
-    return inShape(mouse, this.shape, bounds);
+    return inShape(mouse(), this.shape, bounds);
   }
 }
 

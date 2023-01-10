@@ -272,12 +272,10 @@ class OpenDialog implements Layer {
   }
 
   mousePressed(handle: Handle): void {
-    if (this.btn.custom1.mouseOver()) {
-      resetScreen(1);
-    } else if (this.btn.custom2.mouseOver()) {
-      resetScreen(2);
-    } else if (this.btn.custom3.mouseOver()) {
-      resetScreen(3);
+    for (const [key, button] of Object.entries(this.btn)) {
+      if (button.mouseOver()) {
+        resetScreen(parseInt(key.slice(-1)));
+      }
     }
     getView().removeLayer(this);
     handle.stopPropagation();

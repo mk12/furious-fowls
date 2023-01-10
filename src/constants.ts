@@ -18,13 +18,13 @@ export const blockColors = {
 
 // Timing
 export const preloadDelayMs = 200;
+export const saveIntervalMs = 10_000;
+export const panSpeed = 8; // px per s
+export const timeStep = 1 / 60; // s
 
 // Logic
 export const minBirdsInLevel = 1;
 export const maxBirdsInLevel = 5;
-
-// Animation
-export const panSpeed = 8;
 
 // Dimensions
 export const worldWidth = 2000;
